@@ -1,24 +1,27 @@
-// /api/contact.js
-module.exports = async (req, res) => {
-  // Always respond JSON
+// /api/contact.js  (ESM, works with "type": "module" in package.json)
+export default async function handler(req, res) {
+  // Always return JSON
   try {
     if (req.method !== "POST") {
       return res.status(405).json({ error: "Method not allowed" });
     }
 
-    // Lazy-require nodemailer so missing-module errors are caught and returned as JSON
+    // Lazy-import nodemailer so we can return a JSON error if it's not installed
     let nodemailer;
     try {
-      nodemailer = require("nodemailer");
+      nodemailer = (await import("nodemailer")).default;
     } catch (err) {
-      console.error("Missing dependency: nodemailer", err?.message || err);
+      console.error(
+        "Dependency error: nodemailer not found",
+        err?.message || err
+      );
       return res.status(500).json({
         error: "Server misconfiguration: missing dependency 'nodemailer'",
         hint: "run `npm install nodemailer` and redeploy",
       });
     }
 
-    // Parse body if it's a raw string (some platforms supply raw body)
+    // Normalize body (some hosts may pass a raw string)
     let body = req.body;
     if (typeof body === "string") {
       try {
@@ -36,7 +39,7 @@ module.exports = async (req, res) => {
     if (!name || !email || !message)
       return res.status(400).json({ error: "Missing required fields" });
 
-    // Validate essential environment variables
+    // Required envs
     const requiredEnvs = [
       "SMTP_HOST",
       "SMTP_PORT",
@@ -50,11 +53,11 @@ module.exports = async (req, res) => {
       return res.status(500).json({
         error: "Server misconfiguration: missing environment variables",
         missing,
-        hint: "Set these in Vercel project settings and redeploy",
+        hint: "Set these in your Vercel (or host) environment settings and redeploy",
       });
     }
 
-    // Create transporter
+    // Build transporter
     let transporter;
     try {
       transporter = nodemailer.createTransport({
@@ -67,7 +70,7 @@ module.exports = async (req, res) => {
         },
       });
 
-      // verify connection/auth — surfaces config/auth errors early
+      // verify connection/auth — will fail early for bad config/auth
       await transporter.verify();
     } catch (err) {
       console.error(
@@ -80,7 +83,7 @@ module.exports = async (req, res) => {
       });
     }
 
-    // Build email
+    // Build email content
     const html = `
       <h2>New contact from website</h2>
       <p><strong>Name:</strong> ${escapeHtml(name)}</p>
@@ -104,9 +107,11 @@ module.exports = async (req, res) => {
 
     const mailOptions = {
       from: process.env.SMTP_USER, // must be authenticated sender
-      replyTo: `${escapeHtml(name)} <${escapeHtml(email)}>`,
+      replyTo: `${sanitizePlainText(name)} <${sanitizePlainText(email)}>`,
       to: process.env.TO_EMAIL || process.env.SMTP_USER,
-      subject: `New inquiry: ${escapeHtml(service || "General inquiry")}`,
+      subject: `New inquiry: ${sanitizePlainText(
+        service || "General inquiry"
+      )}`,
       text,
       html,
     };
@@ -122,15 +127,12 @@ module.exports = async (req, res) => {
       });
     }
   } catch (unhandled) {
-    console.error(
-      "Unhandled server error:",
-      unhandled?.message || unhandled || "unknown"
-    );
+    console.error("Unhandled server error:", unhandled?.message || unhandled);
     return res.status(500).json({ error: "Internal server error" });
   }
-};
+}
 
-// Simple escaping to reduce HTML injection risk in emails
+// Minimal HTML escape for the email body
 function escapeHtml(unsafe) {
   return String(unsafe || "")
     .replace(/&/g, "&amp;")
@@ -138,4 +140,11 @@ function escapeHtml(unsafe) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
+}
+
+// Sanitize plain-text values used in headers (replyTo/subject)
+function sanitizePlainText(s) {
+  return String(s || "")
+    .replace(/[\r\n<>]/g, " ")
+    .trim();
 }
