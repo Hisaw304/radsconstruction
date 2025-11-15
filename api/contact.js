@@ -1,150 +1,115 @@
-// /api/contact.js  (ESM, works with "type": "module" in package.json)
+// /api/contact.js — minimal, ESM, hardcoded FROM header
+import nodemailer from "nodemailer";
+
+function sanitize(input = "") {
+  return String(input)
+    .replace(/<[^>]*>?/gm, "")
+    .trim();
+}
+function validEmail(email = "") {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email));
+}
+function escapeHtml(unsafe = "") {
+  return String(unsafe)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
 export default async function handler(req, res) {
-  // Always return JSON
   try {
     if (req.method !== "POST") {
+      res.setHeader("Allow", "POST");
       return res.status(405).json({ error: "Method not allowed" });
     }
 
-    // Lazy-import nodemailer so we can return a JSON error if it's not installed
-    let nodemailer;
-    try {
-      nodemailer = (await import("nodemailer")).default;
-    } catch (err) {
-      console.error(
-        "Dependency error: nodemailer not found",
-        err?.message || err
-      );
-      return res.status(500).json({
-        error: "Server misconfiguration: missing dependency 'nodemailer'",
-        hint: "run `npm install nodemailer` and redeploy",
-      });
-    }
-
-    // Normalize body (some hosts may pass a raw string)
+    // Parse body safely
     let body = req.body;
     if (typeof body === "string") {
       try {
         body = JSON.parse(body);
-      } catch (err) {
-        console.error("Invalid JSON body:", err?.message || err);
+      } catch {
         return res.status(400).json({ error: "Invalid JSON body" });
       }
     }
 
     const { name, email, phone, budget, service, message, hp } = body || {};
 
-    // Basic validation
+    // Honeypot
     if (hp) return res.status(400).json({ error: "Bot detected" });
-    if (!name || !email || !message)
-      return res.status(400).json({ error: "Missing required fields" });
 
-    // Required envs
-    const requiredEnvs = [
-      "SMTP_HOST",
-      "SMTP_PORT",
-      "SMTP_SECURE",
-      "SMTP_USER",
-      "SMTP_PASS",
-    ];
-    const missing = requiredEnvs.filter((k) => !process.env[k]);
-    if (missing.length) {
-      console.error("Missing env vars:", missing);
-      return res.status(500).json({
-        error: "Server misconfiguration: missing environment variables",
-        missing,
-        hint: "Set these in your Vercel (or host) environment settings and redeploy",
-      });
+    // Sanitize & validate
+    const sName = sanitize(name || "");
+    const sEmail = sanitize(email || "");
+    const sPhone = sanitize(phone || "");
+    const sMessage = sanitize(message || "");
+    const sService = sanitize(service || "");
+    const sBudget = sanitize(budget || "");
+
+    const errors = {};
+    if (!sName) errors.name = "Name required";
+    if (!validEmail(sEmail)) errors.email = "Valid email required";
+    if (!sMessage || sMessage.length < 5) errors.message = "Message too short";
+    if (Object.keys(errors).length > 0)
+      return res
+        .status(422)
+        .json({ error: "Validation failed", details: errors });
+
+    // SMTP ENV (these MUST remain env vars)
+    const host = process.env.SMTP_HOST;
+    const port = Number(process.env.SMTP_PORT || 587);
+    const secure = port === 465;
+    const user = process.env.SMTP_USER;
+    const pass = process.env.SMTP_PASS;
+    const CONTACT_TO = process.env.CONTACT_TO || user;
+
+    // ---------- HARDCODED FROM HEADER (per your request) ----------
+    // IMPORTANT: this should match the mailbox you're authenticating as (SMTP_USER)
+    // or be an allowed/verified sender for the SMTP service to avoid rejection.
+    const FROM = "Rads Construction <info@radsconstruction.com>";
+    // ----------------------------------------------------------------
+
+    if (!host || !user || !pass) {
+      console.error("Missing SMTP config");
+      return res.status(500).json({ error: "Server email misconfigured" });
     }
 
-    // Build transporter
-    let transporter;
+    // Create transporter
+    const transporter = nodemailer.createTransport({
+      host,
+      port,
+      secure,
+      auth: { user, pass },
+    });
+
+    // Send admin email
     try {
-      transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST,
-        port: Number(process.env.SMTP_PORT) || 587,
-        secure: process.env.SMTP_SECURE === "true", // true for 465, false for 587
-        auth: {
-          user: process.env.SMTP_USER,
-          pass: process.env.SMTP_PASS,
-        },
+      await transporter.sendMail({
+        from: FROM,
+        to: CONTACT_TO,
+        replyTo: sEmail,
+        subject: `New message from Rads Construction site`,
+        html: `
+          <p><strong>Name:</strong> ${escapeHtml(sName)}</p>
+          <p><strong>Email:</strong> ${escapeHtml(sEmail)}</p>
+          <p><strong>Phone:</strong> ${escapeHtml(sPhone || "-")}</p>
+          <p><strong>Budget:</strong> ${escapeHtml(sBudget || "-")}</p>
+          <p><strong>Service:</strong> ${escapeHtml(sService || "-")}</p>
+          <p><strong>Message:</strong><br/>${escapeHtml(sMessage)}</p>
+        `,
       });
-
-      // verify connection/auth — will fail early for bad config/auth
-      await transporter.verify();
     } catch (err) {
-      console.error(
-        "Failed to configure/verify SMTP transporter:",
-        err?.message || err
-      );
-      return res.status(500).json({
-        error: "Mail transporter configuration or authentication failed",
-        details: err?.message,
-      });
+      console.error("Email send error:", err?.message || err);
+      return res
+        .status(500)
+        .json({ error: "Failed to send email", details: err?.message });
     }
 
-    // Build email content
-    const html = `
-      <h2>New contact from website</h2>
-      <p><strong>Name:</strong> ${escapeHtml(name)}</p>
-      <p><strong>Email:</strong> ${escapeHtml(email)}</p>
-      <p><strong>Phone:</strong> ${escapeHtml(phone || "-")}</p>
-      <p><strong>Budget:</strong> ${escapeHtml(budget || "-")}</p>
-      <p><strong>Service:</strong> ${escapeHtml(service || "-")}</p>
-      <p><strong>Message:</strong><br/>${escapeHtml(message)}</p>
-    `;
-
-    const text = [
-      "New contact from website",
-      `Name: ${name}`,
-      `Email: ${email}`,
-      `Phone: ${phone || "-"}`,
-      `Budget: ${budget || "-"}`,
-      `Service: ${service || "-"}`,
-      "Message:",
-      message,
-    ].join("\n\n");
-
-    const mailOptions = {
-      from: process.env.SMTP_USER, // must be authenticated sender
-      replyTo: `${sanitizePlainText(name)} <${sanitizePlainText(email)}>`,
-      to: process.env.TO_EMAIL || process.env.SMTP_USER,
-      subject: `New inquiry: ${sanitizePlainText(
-        service || "General inquiry"
-      )}`,
-      text,
-      html,
-    };
-
-    try {
-      const info = await transporter.sendMail(mailOptions);
-      return res.status(200).json({ ok: true, messageId: info.messageId });
-    } catch (err) {
-      console.error("Mail send error:", err?.message || err);
-      return res.status(500).json({
-        error: "Failed to send email",
-        details: err?.message,
-      });
-    }
-  } catch (unhandled) {
-    console.error("Unhandled server error:", unhandled?.message || unhandled);
-    return res.status(500).json({ error: "Internal server error" });
+    return res.status(200).json({ ok: true, message: "Message sent" });
+  } catch (err) {
+    console.error("Unexpected error:", err?.message || err);
+    return res.status(500).json({ error: "Unexpected server error" });
   }
-}
-
-// Minimal HTML escape for the email body
-function escapeHtml(unsafe) {
-  return String(unsafe || "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
-
-// Sanitize plain-text values used in headers (replyTo/subject)
-function sanitizePlainText(s) {
-  return String(s || "")
-    .replace(/[\r\n<>]/g, " ")
-    .trim();
 }
