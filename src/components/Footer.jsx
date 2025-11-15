@@ -80,13 +80,7 @@ export default function Footer() {
           <div className="flex items-center gap-2">
             <Mail className="w-4 h-4" />{" "}
             <a href="mailto:contact@urbanforge.com" className="underline">
-              contact@urbanforge.com
-            </a>
-          </div>
-          <div className="flex items-center gap-2 mt-2">
-            <Phone className="w-4 h-4" />{" "}
-            <a href="tel:+1234567890" className="underline">
-              +1 (234) 567-890
+              info@radsconstruction.com
             </a>
           </div>
 
