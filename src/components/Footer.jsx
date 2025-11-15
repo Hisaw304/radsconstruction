@@ -79,7 +79,7 @@ export default function Footer() {
           <h4 className="font-semibold mb-3">Contact</h4>
           <div className="flex items-center gap-2">
             <Mail className="w-4 h-4" />{" "}
-            <a href="mailto:contact@urbanforge.com" className="underline">
+            <a href="mailto:info@radsconstruction.com" className="underline">
               info@radsconstruction.com
             </a>
           </div>

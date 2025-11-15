@@ -1,15 +1,3 @@
-/* ---------------------------------------------------------
-  Serverless API: /api/contact.js (Vercel / Netlify style)
-  - Uses nodemailer
-  - Expects environment variables:
-    SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, TO_EMAIL
-  - Deploy to Vercel (add env vars in Project Settings)
---------------------------------------------------------- */
-
-// /api/contact.js (place this file in your project's /api folder on Vercel)
-
-/* eslint-disable no-undef */
-
 const nodemailer = require("nodemailer");
 
 module.exports = async (req, res) => {
