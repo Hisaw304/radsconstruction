@@ -1,22 +1,5 @@
-// /api/contact.js — minimal, ESM, hardcoded FROM header
+// /api/contact.js (pure ESM, works with "type": "module")
 import nodemailer from "nodemailer";
-
-function sanitize(input = "") {
-  return String(input)
-    .replace(/<[^>]*>?/gm, "")
-    .trim();
-}
-function validEmail(email = "") {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email));
-}
-function escapeHtml(unsafe = "") {
-  return String(unsafe)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
 
 export default async function handler(req, res) {
   try {
@@ -25,91 +8,77 @@ export default async function handler(req, res) {
       return res.status(405).json({ error: "Method not allowed" });
     }
 
-    // Parse body safely
+    // Parse JSON safely
     let body = req.body;
     if (typeof body === "string") {
       try {
         body = JSON.parse(body);
-      } catch {
+      } catch (err) {
         return res.status(400).json({ error: "Invalid JSON body" });
       }
     }
 
-    const { name, email, phone, budget, service, message, hp } = body || {};
+    const { name, email, phone, message } = body || {};
 
-    // Honeypot
-    if (hp) return res.status(400).json({ error: "Bot detected" });
+    // Sanitizers
+    const sanitize = (s = "") =>
+      String(s)
+        .replace(/<[^>]*>?/gm, "")
+        .trim();
+    const sName = sanitize(name);
+    const sEmail = sanitize(email);
+    const sPhone = sanitize(phone);
+    const sMessage = sanitize(message);
 
-    // Sanitize & validate
-    const sName = sanitize(name || "");
-    const sEmail = sanitize(email || "");
-    const sPhone = sanitize(phone || "");
-    const sMessage = sanitize(message || "");
-    const sService = sanitize(service || "");
-    const sBudget = sanitize(budget || "");
+    // Basic validation
+    if (!sName || !sEmail || !sMessage) {
+      return res.status(422).json({ error: "Missing required fields" });
+    }
 
-    const errors = {};
-    if (!sName) errors.name = "Name required";
-    if (!validEmail(sEmail)) errors.email = "Valid email required";
-    if (!sMessage || sMessage.length < 5) errors.message = "Message too short";
-    if (Object.keys(errors).length > 0)
-      return res
-        .status(422)
-        .json({ error: "Validation failed", details: errors });
+    // SMTP config (envs)
+    const SMTP_HOST = process.env.SMTP_HOST;
+    const SMTP_PORT = Number(process.env.SMTP_PORT || 587);
+    const SMTP_USER = process.env.SMTP_USER;
+    const SMTP_PASS = process.env.SMTP_PASS;
 
-    // SMTP ENV (these MUST remain env vars)
-    const host = process.env.SMTP_HOST;
-    const port = Number(process.env.SMTP_PORT || 587);
-    const secure = port === 465;
-    const user = process.env.SMTP_USER;
-    const pass = process.env.SMTP_PASS;
-    const CONTACT_TO = process.env.CONTACT_TO || user;
-
-    // ---------- HARDCODED FROM HEADER (per your request) ----------
-    // IMPORTANT: this should match the mailbox you're authenticating as (SMTP_USER)
-    // or be an allowed/verified sender for the SMTP service to avoid rejection.
-    const FROM = "Rads Construction <info@radsconstruction.com>";
-    // ----------------------------------------------------------------
-
-    if (!host || !user || !pass) {
-      console.error("Missing SMTP config");
+    if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS) {
+      console.error("Missing SMTP configuration");
       return res.status(500).json({ error: "Server email misconfigured" });
     }
 
+    // Hardcoded FROM (requested)
+    const FROM = "Rads Construction <info@radsconstruction.com>";
+
     // Create transporter
     const transporter = nodemailer.createTransport({
-      host,
-      port,
-      secure,
-      auth: { user, pass },
+      host: SMTP_HOST,
+      port: SMTP_PORT,
+      secure: SMTP_PORT === 465,
+      auth: {
+        user: SMTP_USER,
+        pass: SMTP_PASS,
+      },
     });
 
     // Send admin email
-    try {
-      await transporter.sendMail({
-        from: FROM,
-        to: CONTACT_TO,
-        replyTo: sEmail,
-        subject: `New message from Rads Construction site`,
-        html: `
-          <p><strong>Name:</strong> ${escapeHtml(sName)}</p>
-          <p><strong>Email:</strong> ${escapeHtml(sEmail)}</p>
-          <p><strong>Phone:</strong> ${escapeHtml(sPhone || "-")}</p>
-          <p><strong>Budget:</strong> ${escapeHtml(sBudget || "-")}</p>
-          <p><strong>Service:</strong> ${escapeHtml(sService || "-")}</p>
-          <p><strong>Message:</strong><br/>${escapeHtml(sMessage)}</p>
-        `,
-      });
-    } catch (err) {
-      console.error("Email send error:", err?.message || err);
-      return res
-        .status(500)
-        .json({ error: "Failed to send email", details: err?.message });
-    }
+    await transporter.sendMail({
+      from: FROM,
+      to: process.env.CONTACT_TO || SMTP_USER,
+      replyTo: sEmail,
+      subject: "New contact form submission",
+      text: `
+Name: ${sName}
+Email: ${sEmail}
+Phone: ${sPhone}
 
-    return res.status(200).json({ ok: true, message: "Message sent" });
+Message:
+${sMessage}
+      `,
+    });
+
+    return res.status(200).json({ message: "Email sent successfully" });
   } catch (err) {
-    console.error("Unexpected error:", err?.message || err);
-    return res.status(500).json({ error: "Unexpected server error" });
+    console.error("Email error:", err);
+    return res.status(500).json({ error: "Failed to send email" });
   }
 }
