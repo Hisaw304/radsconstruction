@@ -279,7 +279,7 @@ export default function Contact() {
                     href="mailto:contact@urbanforge.com"
                     className="text-sm text-[var(--text-dark)]/90"
                   >
-                    contact@urbanforge.com
+                    info@radsconstruction.com
                   </a>
                 </div>
               </div>

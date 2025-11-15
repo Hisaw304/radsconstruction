@@ -55,14 +55,6 @@ export default function Navbar() {
               info@radsconstruction.com
             </a>
           </div>
-
-          {/* RIGHT: phone */}
-          <div className="flex items-center gap-2 justify-center md:justify-end">
-            <Phone className="w-4 h-4 flex-shrink-0" />
-            <a href="tel:+1234567890" className="underline">
-              +1 (234) 567-890
-            </a>
-          </div>
         </div>
       </div>
 
