@@ -1,0 +1,42 @@
+:root {
+  --kp-body-bg: #f5f6f8; /* light gray background */
+  --primary-bg: #eaeffe;
+  --accent: #9787f3;
+  --text-dark: #2d274b;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+/* Global body styling */
+body {
+  background-color: var(--kp-body-bg);
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  margin: 0;
+  padding: 0;
+}
+
+/* Optional shared classes */
+.nav-hover {
+  transition: transform 0.18s ease, box-shadow 0.18s ease,
+    background-color 0.18s ease;
+}
+.nav-hover:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 6px 20px rgba(45, 39, 75, 0.08);
+}
+
+.icon-shadow {
+  box-shadow: 0 2px 6px rgba(45, 39, 75, 0.08);
+}
+
+/* Slightly larger tap area for mobile */
+.touch-target {
+  padding: 0.5rem;
+}
