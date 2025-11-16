@@ -91,7 +91,10 @@ export default function Contact() {
   };
 
   return (
-    <section className="w-full py-16 bg-[var(--kp-body-bg)] text-[var(--text-dark)]">
+    <section
+      id="contact"
+      className="w-full py-16 bg-[var(--kp-body-bg)] text-[var(--text-dark)]"
+    >
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
           {/* Form */}
@@ -258,15 +261,6 @@ export default function Contact() {
                 <div className="p-2 rounded-lg bg-[var(--accent)]/10">
                   <Phone className="w-5 h-5 text-[var(--accent)]" />
                 </div>
-                <div>
-                  <div className="text-sm font-medium">Phone</div>
-                  <a
-                    href="tel:+1234567890"
-                    className="text-sm text-[var(--text-dark)]/90"
-                  >
-                    +1 (234) 567-890
-                  </a>
-                </div>
               </div>
 
               <div className="flex items-start gap-3 mb-4">
@@ -310,15 +304,6 @@ export default function Contact() {
                     Sat: 9:00am – 2:00pm
                   </div>
                 </div>
-              </div>
-
-              <div className="mt-6">
-                <a
-                  href="#"
-                  className="text-sm text-[var(--accent)] font-medium"
-                >
-                  View on map
-                </a>
               </div>
             </div>
           </motion.aside>
