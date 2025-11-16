@@ -264,7 +264,7 @@ export default function Contact() {
                 <div>
                   <div className="text-sm font-medium">Email</div>
                   <a
-                    href="mailto:contact@urbanforge.com"
+                    href="mailto:info@radsconstruction.com"
                     className="text-sm text-[var(--text-dark)]/90"
                   >
                     info@radsconstruction.com
@@ -294,8 +294,6 @@ export default function Contact() {
                   <div className="text-sm font-medium">Opening Hours</div>
                   <div className="text-sm text-[var(--text-dark)]/90">
                     Mon–Fri: 8:00am – 6:00pm
-                    <br />
-                    Sat: 9:00am – 2:00pm
                   </div>
                 </div>
               </div>
