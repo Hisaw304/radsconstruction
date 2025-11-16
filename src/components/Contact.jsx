@@ -259,12 +259,6 @@ export default function Contact() {
 
               <div className="flex items-start gap-3 mb-4">
                 <div className="p-2 rounded-lg bg-[var(--accent)]/10">
-                  <Phone className="w-5 h-5 text-[var(--accent)]" />
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3 mb-4">
-                <div className="p-2 rounded-lg bg-[var(--accent)]/10">
                   <Mail className="w-5 h-5 text-[var(--accent)]" />
                 </div>
                 <div>
