@@ -129,8 +129,7 @@ export default function Footer() {
       </div>
 
       <div className="border-t border-white/30 py-4 text-center text-sm">
-        © {new Date().getFullYear()} UrbanForge General Contractors — All rights
-        reserved.
+        © {new Date().getFullYear()} Rads Construction — All rights reserved.
       </div>
     </footer>
   );
