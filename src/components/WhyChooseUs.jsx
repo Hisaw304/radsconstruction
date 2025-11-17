@@ -68,10 +68,10 @@ const WhyChooseUs = () => {
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-6">Why Choose Us</h2>
           <p className="text-lg leading-relaxed opacity-80">
-            Choosing the right construction partner is essential. At UrbanForge,
-            we bring together craftsmanship, transparency, and modern building
-            standards to deliver spaces that stand the test of time. Here's what
-            sets us apart.
+            Choosing the right construction partner is essential. At Rads
+            Construction, we bring together craftsmanship, transparency, and
+            modern building standards to deliver spaces that stand the test of
+            time. Here's what sets us apart.
           </p>
         </motion.div>
 

@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Phone } from "lucide-react";
 
-// Import images at the top so bundlers resolve them
 import hero1 from "../assets/hero-1.png";
 import hero2 from "../assets/hero-2.png";
 import hero3 from "../assets/hero-3.png";
@@ -17,7 +16,6 @@ export default function Hero() {
   const timerRef = useRef(null);
   const INTERVAL = 6000;
 
-  // Auto-advance slides (no visible controls per request)
   useEffect(() => {
     if (prefersReducedMotion) return;
 
@@ -30,7 +28,6 @@ export default function Hero() {
     };
   }, [prefersReducedMotion]);
 
-  // motion variants
   const imgVariants = {
     enter: { opacity: 1 },
     exit: { opacity: 0 },
@@ -43,7 +40,7 @@ export default function Hero() {
       transition={{ duration: prefersReducedMotion ? 0 : 0.6, ease: "easeOut" }}
       className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-tight text-white"
     >
-      UrbanForge
+      RADS Construction
     </motion.h1>
   );
 
@@ -55,7 +52,7 @@ export default function Hero() {
           <motion.img
             key={i}
             src={src}
-            alt={`UrbanForge project ${i + 1}`}
+            alt={`RADS Construction project ${i + 1}`}
             loading="lazy"
             className="absolute inset-0 h-full w-full object-cover object-center"
             variants={imgVariants}
@@ -66,22 +63,15 @@ export default function Hero() {
           />
         ))}
 
-        {/* Black overlay 40% for contrast */}
-        <div className="absolute inset-0 bg-black/40" aria-hidden="true" />
-
-        {/* subtle gradient at bottom for legibility */}
-        <div
-          className="absolute left-0 right-0 bottom-0 h-48 bg-gradient-to-t from-black/70 to-transparent"
-          aria-hidden="true"
-        />
+        <div className="absolute inset-0 bg-black/60" aria-hidden="true" />
+        <div className="absolute left-0 right-0 bottom-0 h-48 bg-gradient-to-t from-black/70 to-transparent" />
       </div>
 
-      {/* Content wrapper */}
+      {/* Content */}
       <div className="relative z-10">
         <div className="max-w-7xl mx-auto px-6 py-20 md:py-28 lg:py-36">
-          {/* Grid: content left, decorative info card right on large screens */}
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
-            {/* Left column: main copy */}
+            {/* Left */}
             <div className="md:col-span-7 lg:col-span-6">
               <div className="flex flex-col items-center md:items-start text-center md:text-left gap-6">
                 <div className="text-sm tracking-widest uppercase text-white">
@@ -93,13 +83,13 @@ export default function Hero() {
                 <div className="text-lg md:text-xl text-white max-w-2xl mt-2">
                   <div className="font-semibold">General Contractors</div>
                   <p className="mt-4 text-white leading-relaxed">
-                    UrbanForge partners with owners and architects to deliver
-                    thoughtfully engineered buildings and spaces. From complex
-                    commercial projects to refined residential renovations, we
-                    combine rigorous safety standards, experienced management,
-                    and craft-level finishing to bring ambitious visions to
-                    life. Our teams are problem-solvers — on time, on budget,
-                    and built to stand the test of time.
+                    RADS Construction delivers high-quality, carefully managed
+                    commercial and residential builds. Whether it’s a complex
+                    renovation or a fully modern new construction, we combine
+                    strong project management, safe operations, and
+                    craftsmanship that holds up for decades. Our teams handle
+                    challenges with clarity and precision — on time, on budget,
+                    and built with long-term durability in mind.
                   </p>
                 </div>
 
@@ -113,7 +103,7 @@ export default function Hero() {
                   </a>
 
                   <a
-                    href="#projects"
+                    href="#portfolio"
                     className="inline-flex items-center justify-center rounded-full px-5 py-3 text-sm bg-white/10 text-white border border-white/20 hover:bg-white/12 focus:outline-none focus-visible:ring-4 focus-visible:ring-white/10"
                   >
                     Our Projects
@@ -121,13 +111,12 @@ export default function Hero() {
                 </div>
 
                 <div className="mt-6 text-sm text-white">
-                  Licensed & insured — Serving metropolitan and regional
-                  projects • 120+ projects completed
+                  Licensed & insured • 120+ completed projects
                 </div>
               </div>
             </div>
 
-            {/* Right column: modern info card (only visible md+) to avoid empty space */}
+            {/* Right card */}
             <div className="hidden md:flex md:col-span-5 lg:col-span-6 justify-end">
               <div className="w-full max-w-md bg-white/6 backdrop-blur-md border border-white/10 rounded-2xl p-6 text-white">
                 <div className="flex flex-col gap-4">
@@ -176,7 +165,7 @@ export default function Hero() {
                   <div className="mt-2">
                     <a
                       href="#about"
-                      className="inline-block rounded-lg bg-[var(--primary-bg)]/8 text-white px-4 py-2 text-sm border border-white/10 hover:bg-[var(--primary-bg)]/12"
+                      className="inline-block rounded-lg bg-white/10 text-white px-4 py-2 text-sm border border-white/10 hover:bg-white/20"
                     >
                       Learn more
                     </a>
@@ -188,7 +177,7 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* small dot indicators centered on mobile only (optional subtle) */}
+      {/* mobile dots */}
       <div className="absolute left-1/2 bottom-6 z-20 -translate-x-1/2 md:hidden flex items-center gap-2">
         {images.map((_, i) => (
           <span
@@ -196,7 +185,6 @@ export default function Hero() {
             className={`h-1.5 w-8 rounded-full transition-all ${
               i === index ? "bg-[var(--accent)]" : "bg-white/30"
             }`}
-            aria-hidden
           />
         ))}
       </div>

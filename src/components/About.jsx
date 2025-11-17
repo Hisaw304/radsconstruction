@@ -18,14 +18,14 @@ const About = () => {
           className="max-w-3xl"
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            About UrbanForge
+            About Rads Construction
           </h2>
           <p className="text-lg leading-relaxed opacity-80">
-            At UrbanForge, we believe that great construction is more than
-            craftsmanship—it's vision, trust, and long–term commitment. For over
-            a decade, we’ve helped homeowners and businesses transform ordinary
-            spaces into modern, lasting environments built with precision and a
-            deep respect for structural integrity.
+            At Rads Construction, we believe that great construction is more
+            than craftsmanship—it's vision, trust, and long–term commitment. For
+            over a decade, we’ve helped homeowners and businesses transform
+            ordinary spaces into modern, lasting environments built with
+            precision and a deep respect for structural integrity.
           </p>
         </motion.div>
 
@@ -55,8 +55,8 @@ const About = () => {
 
             <p className="text-base md:text-lg leading-relaxed opacity-80">
               Whether you're imagining a refreshed living space, a ground–up
-              build, or a modern commercial upgrade, UrbanForge brings clarity,
-              craftsmanship, and innovation to every idea.
+              build, or a modern commercial upgrade, Rads Construction brings
+              clarity, craftsmanship, and innovation to every idea.
             </p>
           </motion.div>
 
@@ -70,7 +70,7 @@ const About = () => {
           >
             <img
               src={aboutImg}
-              alt="About UrbanForge"
+              alt="About Rads Construction"
               className="w-full rounded-2xl shadow-xl object-cover"
             />
           </motion.div>

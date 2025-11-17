@@ -27,8 +27,6 @@ export default function Navbar() {
 
   return (
     <header className="w-full sticky top-0 z-50 font-sans">
-      {/* Top contact + social bar */}
-
       <div className="bg-[var(--text-dark)] border-b border-white/30">
         <div
           className="
@@ -54,6 +52,15 @@ export default function Navbar() {
               info@radsconstruction.com
             </a>
           </div>
+          {/* RIGHT: phone */}{" "}
+          <div className="flex items-center gap-2 justify-center md:justify-start truncate">
+            {" "}
+            <Phone className="w-4 h-4 flex-shrink-0" />{" "}
+            <a href="tel:+12103483060" className="underline">
+              {" "}
+              +1 (210) 348-3060{" "}
+            </a>{" "}
+          </div>
         </div>
       </div>
 
@@ -71,9 +78,9 @@ export default function Navbar() {
                 />
                 <div className="leading-tight">
                   <div className="font-extrabold text-lg tracking-tight">
-                    UrbanForge
+                    Rads
                   </div>
-                  <div className="text-xs">General Contractors</div>
+                  <div className="text-xs">Construction</div>
                 </div>
               </a>
             </div>

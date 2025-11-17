@@ -9,7 +9,7 @@ const testimonials = [
     name: "Sarah Mitchell",
     role: "Home Renovation Client",
     rating: 5,
-    text: "UrbanForge completely transformed our home. Their attention to detail and transparency throughout the process made everything stress-free.",
+    text: "Rads Construction completely transformed our home. Their attention to detail and transparency throughout the process made everything stress-free.",
   },
   {
     name: "David Chen",
@@ -27,7 +27,7 @@ const testimonials = [
     name: "Michael Thompson",
     role: "Full Home Remodel",
     rating: 5,
-    text: "From planning to execution, everything was smooth and professional. UrbanForge brought our vision to life.",
+    text: "From planning to execution, everything was smooth and professional. Rads Construction brought our vision to life.",
   },
 ];
 
@@ -59,8 +59,8 @@ const Testimonials = () => {
             What Our Clients Say
           </h2>
           <p className="text-lg leading-relaxed opacity-80">
-            Genuine feedback from clients who trusted us to bring their spaces
-            to life.
+            Genuine feedback from homeowners and businesses who trusted Rads
+            Construction to bring their projects to life.
           </p>
         </motion.div>
 

@@ -259,6 +259,21 @@ export default function Contact() {
 
               <div className="flex items-start gap-3 mb-4">
                 <div className="p-2 rounded-lg bg-[var(--accent)]/10">
+                  <Phone className="w-5 h-5 text-[var(--accent)]" />
+                </div>
+                <div>
+                  <div className="text-sm font-medium">Phone</div>
+                  <a
+                    href="tel:+1234567890"
+                    className="text-sm text-[var(--text-dark)]/90"
+                  >
+                    +1 (210) 348-3060
+                  </a>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3 mb-4">
+                <div className="p-2 rounded-lg bg-[var(--accent)]/10">
                   <Mail className="w-5 h-5 text-[var(--accent)]" />
                 </div>
                 <div>
@@ -279,9 +294,9 @@ export default function Contact() {
                 <div>
                   <div className="text-sm font-medium">Address</div>
                   <div className="text-sm text-[var(--text-dark)]/90">
-                    123 UrbanForge Way
+                    8510 Fredericksburg Rd,
                     <br />
-                    Metropolis, ST 12345
+                    San Antonio, Texas 78229
                   </div>
                 </div>
               </div>

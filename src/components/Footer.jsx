@@ -21,12 +21,12 @@ export default function Footer() {
           <div className="flex items-center gap-3 mb-3">
             <img
               src="/logo.png"
-              alt="UrbanForge logo"
+              alt="Rads Construction logo"
               className="h-12 w-12 object-contain"
             />
             <div>
-              <div className="font-bold text-lg">UrbanForge</div>
-              <div className="text-sm">General Contractors</div>
+              <div className="font-bold text-lg">Rads</div>
+              <div className="text-sm">Construction</div>
             </div>
           </div>
           <p className="text-sm leading-relaxed">
@@ -77,13 +77,21 @@ export default function Footer() {
         {/* Contact */}
         <div>
           <h4 className="font-semibold mb-3">Contact</h4>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 mb-3">
             <Mail className="w-4 h-4" />{" "}
             <a href="mailto:info@radsconstruction.com" className="underline">
               info@radsconstruction.com
             </a>
           </div>
 
+          <div>
+            <div className="font-semibold ">Address</div>
+            <div className="flex items-center gap-2 mb-3 ">
+              8510 Fredericksburg Rd,
+              <br />
+              San Antonio, Texas 78229
+            </div>
+          </div>
           <div className="mt-6">
             <h5 className="font-semibold mb-2">Follow Us</h5>
             <div className="mt-3 flex items-center gap-3">

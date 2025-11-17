@@ -29,7 +29,7 @@ const services = [
     title: "Commercial Remodeling Services",
     img: commercial,
     alt: "Commercial interior remodeling",
-    copy: "UrbanForge supports commercial owners and tenants with remodeling solutions that minimize downtime and maximize ROI. We specialize in retail fit-outs, office modernizations, restaurant conversions, and hospitality refurbishments.",
+    copy: "Rads Construction supports commercial owners and tenants with remodeling solutions that minimize downtime and maximize ROI. We specialize in retail fit-outs, office modernizations, restaurant conversions, and hospitality refurbishments.",
   },
   {
     id: "deck",
@@ -68,8 +68,8 @@ export default function Services() {
             Services We Offer
           </h2>
           <p className="mt-3 max-w-3xl text-[var(--text-dark)]/90 mx-auto md:mx-0 leading-relaxed">
-            UrbanForge provides a comprehensive set of construction services
-            tailored to commercial and residential needs.
+            Rads Construction provides a comprehensive set of construction
+            services tailored to commercial and residential needs.
           </p>
         </motion.div>
 
